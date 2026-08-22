@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urnômetro — com qual plano de governo você combina?</title>
+<meta name="description" content="Dez perguntas, sem opção neutra. Compare suas posições com os planos de governo registrados no TSE pelos cinco principais candidatos à Presidência em 2026.">
+<meta name="theme-color" content="#0F1A24">
+
+<!-- Compartilhamento social.
+     Falta apenas og:image: gere um PNG 1200x630 do logo + título e hospede junto do app,
+     depois descomente a linha abaixo com a URL final. Sem isso o link compartilha sem cartão visual. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Urnômetro">
+<meta property="og:title" content="Urnômetro — com qual plano de governo você combina?">
+<meta property="og:description" content="Dez perguntas, sem opção neutra. Baseado nos planos registrados no TSE. Ferramenta não-oficial.">
+<meta property="og:locale" content="pt_BR">
+<!-- <meta property="og:image" content="https://SEU-DOMINIO/og.png"> -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Urnômetro">
+<meta name="twitter:description" content="Dez perguntas, sem opção neutra. Descubra com qual plano de governo você combina.">
+
+<!-- favicon: o mesmo mark do cabeçalho, embutido -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='4' y='6' width='40' height='36' rx='7' fill='%230F1A24'/%3E%3Cpath d='M11 32 A13 13 0 0 1 37 32' fill='none' stroke='%234EA8DE' stroke-width='2.4' stroke-linecap='round'/%3E%3Cg stroke='%23D9A441' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='15.7' y1='30.2' x2='12.3' y2='29.5'/%3E%3Cline x1='18.3' y1='25.7' x2='16' y2='23.1'/%3E%3Cline x1='29.7' y1='25.7' x2='32' y2='23.1'/%3E%3Cline x1='32.3' y1='30.2' x2='35.7' y2='29.5'/%3E%3C/g%3E%3Cline x1='24' y1='32' x2='30.7' y2='24.6' stroke='%23EAE6DA' stroke-width='2.6' stroke-linecap='round'/%3E%3Ccircle cx='24' cy='32' r='2.6' fill='%23EAE6DA'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!--
+  URNÔMETRO — Eleições presidenciais Brasil 2026
+  ==============================================
+  O nome segue a lógica do Wahl-O-Mat alemão: "urna" (o artefato cívico mais
+  reconhecível do país) + "-ômetro" (o sufixo de máquina-que-mede, produtivo em
+  português: bafômetro, velocímetro). O logo é um ponteiro de medidor com QUATRO
+  marcas e um vão no centro — a escala de 4 pontos sem neutro, desenhada.
+
+  MODELO
+  - Escala de 4 pontos, sem neutro: nem o usuário nem o candidato podem ficar no meio.
+  - Quando um plano é OMISSO sobre um tema, o valor é `null` e o eixo sai do cálculo
+    daquele candidato — em vez de virar um "0" que fabrica compatibilidade falsa.
+    A nota é normalizada pelo nº de eixos avaliados ("avaliado em X de 9 temas").
+  - A pergunta 10 não é eixo ideológico: define o PESO da concretude na nota (0% a 40%).
+
+  BASE DOS DADOS — planos registrados no TSE entre 6 e 15 de agosto de 2026:
+    Lula (PT) ......... "Diretrizes para o Programa de Transformação do Brasil" — 84 pgs, 13 eixos
+    Flávio Bolsonaro .. "Para o Brasil Vencer o Atraso" — 76 pgs, 9 eixos
+    Ronaldo Caiado .... "Plano de Governo 2027-2030" — 100 pgs, 26 temas
+    Romeu Zema ........ "Plano Implacável" — 81 pgs, 20 temas
+    Renan Santos ...... "O futuro é glorioso" — 51 pgs (resumo do Livro Amarelo, ~500 pgs)
+
+  COMO EDITAR
+  - AXES: os 9 eixos. Toda afirmação é escrita de forma que +2 = concordância total.
+  - CANDIDATES[].vector: 9 valores na ORDEM de AXES. Use -2, -1, 1, 2 — ou `null` se o
+    plano não trata do tema. NUNCA use 0: não há posição neutra nesta escala.
+  - CANDIDATES[].inferred: eixos onde o valor foi DEDUZIDO (o plano toca no assunto mas
+    não declara posição direta). Diferente de `null`, que é omissão total.
+  - CANDIDATES[].substance: nota 0-100 de concretude. É JUÍZO EDITORIAL, com a evidência
+    exposta em substanceNote dentro do próprio app. Discorde e edite.
+
+  AVISO LEGAL: ferramenta não-oficial. A legislação eleitoral é rígida quanto a material
+  que possa ser confundido com comunicação da Justiça Eleitoral — mantenha o selo
+  "não-oficial" visível e não use marcas ou nomes de sistemas do TSE.
+-->
+
+<style>
+  :root{
+    --bg:#0F1A24; --panel:#16242F; --screen:#EAE6DA; --screen-ink:#1A2730;
+    --accent:#4EA8DE; --accent-deep:#2C7BB0; --gold:#D9A441; --red:#C4614F;
+    --ink:#E8EEF2; --muted:#7E97A8; --muted-2:#4C6273; --maxw:660px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 10% -5%, rgba(78,168,222,.13), transparent 45%),
+      radial-gradient(circle at 105% 105%, rgba(217,164,65,.09), transparent 42%);
+    color:var(--ink); font-family:'Inter',-apple-system,sans-serif; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; padding:26px 16px 64px;
+  }
+  .mono{ font-family:'Space Mono',ui-monospace,monospace; }
+
+  header.top{ width:100%; max-width:var(--maxw); margin-bottom:22px; }
+  .lockup{ display:flex; align-items:center; gap:11px; margin-bottom:16px; }
+  .lockup svg{ width:38px; height:38px; flex-shrink:0; }
+  .wordmark{
+    font-family:'Space Mono',monospace; font-weight:700; font-size:19px;
+    letter-spacing:.02em; line-height:1;
+  }
+  .badge{
+    font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); border:1px solid rgba(255,255,255,.16);
+    border-radius:20px; padding:4px 9px; margin-left:auto; white-space:nowrap;
+  }
+  h1{ font-size:clamp(24px,5.1vw,33px); line-height:1.13; margin:0 0 8px; font-weight:800; letter-spacing:-.015em; }
+  .sub{ color:var(--muted); font-size:14.5px; line-height:1.55; margin:0; max-width:56ch; }
+
+  main{ width:100%; max-width:var(--maxw); }
+  .card{ background:var(--panel); border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:22px; }
+  .intro-list{ margin:0 0 20px; padding:0; list-style:none; display:grid; gap:10px; }
+  .intro-list li{ display:flex; gap:11px; font-size:14px; line-height:1.5; }
+  .intro-list li::before{ content:"›"; color:var(--accent); font-weight:700; font-family:'Space Mono',monospace; }
+  .intro-list b{ font-weight:600; }
+
+  button.primary{
+    width:100%; background:var(--accent); color:#06131C; border:none; border-radius:10px;
+    padding:15px 18px; font-family:'Space Mono',monospace; font-weight:700; font-size:13.5px;
+    letter-spacing:.06em; text-transform:uppercase; cursor:pointer; transition:transform .12s ease,background .12s ease;
+  }
+  button.primary:hover{ background:#63b6e8; }
+  button.primary:active{ transform:scale(.985); }
+  button.primary:disabled{ opacity:.32; cursor:not-allowed; }
+  button.ghost{ background:transparent; border:1px solid rgba(255,255,255,.15); color:var(--muted); border-radius:10px; padding:12px 16px; font-family:'Space Mono',monospace; font-size:12.5px; cursor:pointer; }
+  button.ghost:hover{ color:var(--ink); border-color:rgba(255,255,255,.32); }
+  button:focus-visible, .likert button:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  #quiz{ display:none; }
+  .progress-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; font-family:'Space Mono',monospace; font-size:11.5px; color:var(--muted); }
+  .progress-track{ width:100%; height:5px; background:rgba(255,255,255,.09); border-radius:4px; overflow:hidden; margin-bottom:18px; }
+  .progress-fill{ height:100%; background:var(--accent); width:0%; transition:width .35s ease; }
+
+  .screen{ background:var(--screen); color:var(--screen-ink); border-radius:10px; padding:26px 22px 24px; }
+  .screen.meta{ background:#F3EDD9; box-shadow:inset 0 0 0 2px var(--gold); }
+  .axis-tag{ font-family:'Space Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--accent-deep); margin:0 0 10px; }
+  .screen.meta .axis-tag{ color:#9A6D14; }
+  .statement{ font-size:18.5px; line-height:1.4; font-weight:600; margin:0; }
+  .helper{ font-size:13px; line-height:1.5; color:rgba(26,39,48,.62); margin:10px 0 0; }
+
+  .likert{ margin-top:20px; display:grid; gap:7px; }
+  .likert .divider{
+    display:flex; align-items:center; gap:9px; margin:5px 0 2px;
+    font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(26,39,48,.35);
+  }
+  .likert .divider::before,.likert .divider::after{ content:""; height:1px; flex:1; background:rgba(26,39,48,.14); }
+  .likert button{
+    width:100%; text-align:left; background:rgba(26,39,48,.04);
+    border:1.5px solid rgba(26,39,48,.14); border-radius:9px; padding:13px 14px;
+    font-family:'Inter',sans-serif; font-size:14.5px; font-weight:500; color:var(--screen-ink);
+    cursor:pointer; display:flex; align-items:center; gap:10px;
+    transition:background .12s ease,border-color .12s ease;
+  }
+  .likert button .dot{ width:9px; height:9px; border-radius:50%; background:rgba(26,39,48,.25); flex-shrink:0; }
+  .likert button.strong .dot{ box-shadow:0 0 0 3px rgba(26,39,48,.10); }
+  .likert button:hover{ background:rgba(78,168,222,.12); border-color:rgba(44,123,176,.45); }
+  .likert button.selected{ background:var(--accent-deep); border-color:var(--accent-deep); color:#F2F8FC; }
+  .likert button.selected .dot{ background:#F2F8FC; }
+  .likert button.selected.strong .dot{ box-shadow:0 0 0 3px rgba(242,248,252,.28); }
+  .screen.meta .likert button.selected{ background:#9A6D14; border-color:#9A6D14; }
+
+  .no-neutral{ font-family:'Space Mono',monospace; font-size:10.5px; color:rgba(26,39,48,.42); margin:12px 0 0; line-height:1.5; text-align:center; }
+
+  .bezel-buttons{ display:flex; justify-content:space-between; margin-top:18px; gap:10px; }
+  .bezel-buttons .confirm{ flex:1; }
+
+  #results{ display:none; }
+  .zigzag{
+    height:12px;
+    background:linear-gradient(135deg,var(--bg) 25%,transparent 25%) 0 0,
+               linear-gradient(225deg,var(--bg) 25%,transparent 25%) 0 0;
+    background-size:14px 14px; background-repeat:repeat-x; position:relative; z-index:2;
+  }
+  .receipt{ background:var(--screen); color:var(--screen-ink); border-radius:0 0 6px 6px; padding:22px 20px 26px; margin-top:-1px; }
+  .receipt h2{ font-family:'Space Mono',monospace; font-size:12.5px; text-transform:uppercase; letter-spacing:.12em; margin:0 0 4px; color:var(--accent-deep); }
+  .stamp{ font-family:'Space Mono',monospace; font-size:10.5px; color:rgba(26,39,48,.55); margin:0 0 16px; }
+  .weight-note{ font-family:'Space Mono',monospace; font-size:11px; background:rgba(217,164,65,.16); border-left:3px solid var(--gold); padding:9px 11px; margin:0 0 16px; color:rgba(26,39,48,.8); line-height:1.5; }
+
+  .result-row{ border-top:1px dashed rgba(26,39,48,.25); padding:15px 0; opacity:0; transform:translateY(6px); animation:rise .4s ease forwards; }
+  .result-row:first-of-type{ border-top:none; padding-top:4px; }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+  .result-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .result-name{ font-weight:700; font-size:15.5px; }
+  .result-name .party{ font-weight:400; color:rgba(26,39,48,.55); font-size:12.5px; }
+  .result-pct{ font-family:'Space Mono',monospace; font-weight:700; font-size:17px; white-space:nowrap; }
+  .bar-track{ height:6px; background:rgba(26,39,48,.1); border-radius:4px; overflow:hidden; margin:8px 0 8px; }
+  .bar-fill{ height:100%; background:var(--accent-deep); width:0%; }
+  .top .bar-fill{ background:var(--gold); }
+  .top .result-pct{ color:#9A6D14; }
+  .split{ display:flex; flex-wrap:wrap; gap:6px 14px; font-family:'Space Mono',monospace; font-size:11px; color:rgba(26,39,48,.6); margin:0 0 8px; }
+  .split b{ color:rgba(26,39,48,.85); }
+  .result-blurb{ font-size:13px; color:rgba(26,39,48,.75); line-height:1.5; margin:0; }
+  .flag{ font-family:'Space Mono',monospace; font-size:10.5px; margin-top:7px; line-height:1.5; }
+  .flag.silent{ color:rgba(26,39,48,.5); }
+  .flag.inferred{ color:#9A6D14; }
+  .flag.diverge{ color:var(--red); }
+
+  .toggle{ background:none; border:none; padding:0; margin-top:9px; font-family:'Space Mono',monospace; font-size:11px; color:var(--accent-deep); text-decoration:underline; cursor:pointer; }
+  .detail{ display:none; margin-top:10px; border-top:1px dotted rgba(26,39,48,.22); padding-top:10px; }
+  .detail.open{ display:block; }
+  .drow{ display:flex; justify-content:space-between; gap:12px; font-size:12px; padding:5px 0; border-bottom:1px dotted rgba(26,39,48,.1); }
+  .drow span:first-child{ color:rgba(26,39,48,.55); flex-shrink:0; }
+  .drow span:last-child{ text-align:right; color:rgba(26,39,48,.85); }
+  .drow.match-far span:last-child{ color:var(--red); }
+  .drow.silent span:last-child{ color:rgba(26,39,48,.4); font-style:italic; }
+  .subnote{ font-size:11.5px; line-height:1.55; color:rgba(26,39,48,.65); margin:10px 0 0; }
+  .subnote b{ color:rgba(26,39,48,.85); }
+
+  .footer-note{ margin-top:18px; padding-top:14px; border-top:1px dashed rgba(26,39,48,.25); font-size:11.5px; line-height:1.6; color:rgba(26,39,48,.6); }
+  .footer-note a{ color:var(--accent-deep); }
+  .post-actions{ display:flex; gap:10px; margin-top:18px; }
+  .post-actions button{ flex:1; }
+  footer.disclaimer{ max-width:var(--maxw); width:100%; margin-top:26px; font-size:12px; color:var(--muted-2); line-height:1.6; text-align:center; }
+
+  @media (prefers-reduced-motion:reduce){
+    .result-row{ animation:none; opacity:1; transform:none; }
+    .bar-fill,.progress-fill{ transition:none; }
+  }
+  @media (max-width:420px){
+    .badge{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="lockup">
+    <!-- Mark: ponteiro de medidor com 4 marcas e vão central = a escala sem neutro -->
+    <svg viewBox="0 0 48 48" role="img" aria-label="Urnômetro">
+      <rect x="4" y="6" width="40" height="36" rx="7" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
+      <path d="M11 32 A13 13 0 0 1 37 32" fill="none" stroke="#4EA8DE" stroke-width="2.4" stroke-linecap="round"/>
+      <g stroke="#D9A441" stroke-width="2" stroke-linecap="round">
+        <line x1="15.7" y1="30.2" x2="12.3" y2="29.5"/>
+        <line x1="18.3" y1="25.7" x2="16"   y2="23.1"/>
+        <line x1="29.7" y1="25.7" x2="32"   y2="23.1"/>
+        <line x1="32.3" y1="30.2" x2="35.7" y2="29.5"/>
+      </g>
+      <line x1="24" y1="32" x2="30.7" y2="24.6" stroke="#EAE6DA" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="24" cy="32" r="2.6" fill="#EAE6DA"/>
+    </svg>
+    <span class="wordmark">Urnômetro</span>
+    <span class="badge mono">não-oficial</span>
+  </div>
+  <h1>Com qual plano de governo você combina?</h1>
+  <p class="sub">Dez perguntas, sem opção neutra: em cada uma você escolhe um lado. Comparação com os cinco planos registrados no TSE em agosto de 2026.</p>
+</header>
+
+<main>
+  <section id="intro" class="card">
+    <ul class="intro-list">
+      <li>Cerca de <b>3 minutos</b>. Nenhum dado sai do seu navegador.</li>
+      <li><b>Não há resposta neutra.</b> A escala tem 4 pontos e sempre exige um lado — dá para concordar ou discordar em parte, mas não ficar em cima do muro.</li>
+      <li>Baseado nos <b>planos oficiais</b> protocolados no TSE, não em declarações de campanha.</li>
+      <li>Quando um plano é <b>omisso</b> sobre um tema, o eixo sai do cálculo daquele candidato — em vez de virar uma falsa compatibilidade.</li>
+      <li>A última pergunta define <b>quanto peso</b> a concretude das propostas terá na nota final.</li>
+    </ul>
+    <button class="primary" onclick="startQuiz()">Começar</button>
+  </section>
+
+  <section id="quiz">
+    <div class="progress-row">
+      <span id="progressLabel" class="mono">PERGUNTA 01 DE 10</span>
+      <span id="progressPct" class="mono">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="screen" id="screenBox">
+      <p class="axis-tag" id="axisTag">TEMA</p>
+      <p class="statement" id="statementText">Carregando…</p>
+      <p class="helper" id="helperText"></p>
+      <div class="likert" id="likertOptions"></div>
+      <p class="no-neutral" id="noNeutral">Sem opção neutra — escolha o lado para o qual você pende, mesmo que pouco.</p>
+    </div>
+
+    <div class="bezel-buttons">
+      <button class="ghost" id="backBtn" onclick="goBack()">← Voltar</button>
+      <button class="primary confirm" id="nextBtn" onclick="goNext()" disabled>Confirma</button>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="zigzag"></div>
+    <div class="receipt">
+      <h2>Boletim do Urnômetro</h2>
+      <p class="stamp" id="stampDate">—</p>
+      <p class="weight-note mono" id="weightNote">—</p>
+      <div id="resultsList"></div>
+      <div class="footer-note">
+        O Urnômetro é uma ferramenta simplificada e <b>não-oficial</b>, feita para organizar seu próprio
+        raciocínio — não é pesquisa eleitoral, instrumento científico nem recomendação de voto.
+        Não tem vínculo com a Justiça Eleitoral. Os planos completos estão no
+        <a href="https://divulgacandcontas.tse.jus.br" target="_blank" rel="noopener">DivulgaCandContas (TSE)</a>,
+        e vale lê-los antes de decidir.
+      </div>
+    </div>
+    <div class="post-actions">
+      <button class="ghost" onclick="restart()">Refazer</button>
+      <button class="ghost" onclick="window.print()">Imprimir / salvar</button>
+    </div>
+  </section>
+</main>
+
+<footer class="disclaimer">
+  <b>Urnômetro</b> · dados levantados em agosto de 2026 a partir dos planos registrados no TSE
+  e de cobertura jornalística. Posições podem mudar ao longo da campanha.
+</footer>
+
+<script>
+/* ====================== ESCALA DE 4 PONTOS (sem neutro) ====================== */
+const LIKERT = [
+  { value:-2, label:"Discordo totalmente", strong:true  },
+  { value:-1, label:"Discordo em parte",   strong:false },
+  { value: 1, label:"Concordo em parte",   strong:false },
+  { value: 2, label:"Concordo totalmente", strong:true  },
+];
+
+/* ====================== EIXOS (9) ====================== */
+const AXES = [
+  { key:"estado", label:"Tamanho do Estado",
+    text:"O Estado deveria privatizar empresas estatais e reduzir bastante sua participação direta na economia.",
+    help:"Vai de manter estatais estratégicas (Petrobras, bancos públicos) até privatizar todas elas." },
+
+  { key:"tributaria", label:"Reforma tributária",
+    text:"A reforma tributária aprovada em 2023 deveria ser revisada ou revogada antes de terminar a transição.",
+    help:"A transição já começou em 2026 e vai até 2033. Mexer agora traz insegurança jurídica; não mexer mantém a alíquota projetada perto de 28-30%." },
+
+  { key:"fiscal", label:"Gasto público",
+    text:"O governo deveria cortar gastos de forma profunda, incluindo extinguir ministérios e enxugar a máquina pública.",
+    help:"Do lado oposto: conter o crescimento da despesa sem cortes drásticos, preservando programas sociais." },
+
+  { key:"social", label:"Política social",
+    text:"Transferência de renda como o Bolsa Família deveria exigir contrapartida de trabalho ou ser substituída por geração de emprego.",
+    help:"Vai de manter e ampliar o modelo atual até substituí-lo por frentes de trabalho remuneradas." },
+
+  { key:"trabalho", label:"Trabalho",
+    text:"As regras trabalhistas deveriam ser mais flexíveis, com alternativas à CLT — em vez de reduzir a jornada por lei.",
+    help:"Do lado oposto: reduzir a jornada para 40h semanais e acabar com a escala 6x1." },
+
+  { key:"seguranca", label:"Segurança pública",
+    text:"O combate ao crime exige endurecimento penal: reduzir a maioridade penal, tratar facções como terrorismo e empregar as Forças Armadas.",
+    help:"Do lado oposto: coordenação federal via SUSP, inteligência, câmeras corporais e asfixia financeira das facções, sem endurecer penas." },
+
+  { key:"ambiente", label:"Clima e meio ambiente",
+    text:"Cumprir metas climáticas e combater o desmatamento deve ser prioridade central do governo, mesmo com custo econômico no curto prazo.",
+    help:"Atenção: aqui +2 significa MAIS prioridade ambiental — o sentido é invertido em relação às perguntas anteriores." },
+
+  { key:"externa", label:"Política externa",
+    text:"O Brasil deveria se alinhar mais aos Estados Unidos e ao Ocidente, se afastando do BRICS e do eixo Sul Global.",
+    help:"Do lado oposto: multilateralismo, integração sul-americana e recusa a alinhamento automático com potências." },
+
+  { key:"judiciario", label:"Judiciário",
+    text:"O STF tem poder demais e sua atuação deveria ser limitada por lei ou emenda constitucional.",
+    help:"Inclui corregedoria externa para ministros, redução de competências da Corte e mandato fixo." },
+];
+
+/* ====================== PERGUNTA 10 — PESO ====================== */
+const META = {
+  label:"Concretude das propostas",
+  text:"Quanto pesa, para você, o plano vir com número, prazo e caminho de execução — em vez de diretriz genérica?",
+  help:"Esta resposta não muda sua posição ideológica. Ela define quanto a nota de concretude de cada plano entra no cálculo final (de 0% a 40%).",
+  options:[
+    { value:-2, label:"Não pesa — importa a direção geral",      strong:true  },
+    { value:-1, label:"Pesa pouco",                               strong:false },
+    { value: 1, label:"Pesa bastante",                            strong:false },
+    { value: 2, label:"É decisivo — sem conta feita, não vale",   strong:true  },
+  ]
+};
+
+/* ====================== CANDIDATOS ======================
+   vector na ordem de AXES:
+   estado, tributaria, fiscal, social, trabalho, seguranca, ambiente, externa, judiciario
+   Valores permitidos: -2, -1, 1, 2 ou null (plano omisso). NUNCA 0.                    */
+const CANDIDATES = [
+  {
+    id:"lula", name:"Lula", party:"PT",
+    plan:"“Diretrizes para o Programa de Transformação do Brasil” · 84 pgs · 13 eixos",
+    vector:[-2,-2,-2,-2,-2,-1, 2,-2,-2],
+    inferred:[],
+    substance:68,
+    substanceNote:"Tem metas numéricas verificáveis (80% de crianças alfabetizadas na idade certa) e se apoia em programas já rodando — Pé-de-Meia, Farmácia Popular, PEC da Segurança já aprovada na Câmara. Contra: o próprio texto se apresenta como “primeira versão” de diretrizes, e a Autoridade Climática prometida em 2022 sumiu do programa.",
+    blurb:"Continuidade: mantém o arcabouço fiscal, reduz jornada para 40h, cria Ministério da Segurança Pública, amplia Farmácia Popular e mantém a agenda climática no centro."
+  },
+  {
+    id:"flavio", name:"Flávio Bolsonaro", party:"PL",
+    plan:"“Para o Brasil Vencer o Atraso” · 76 pgs · 9 eixos",
+    vector:[ 1, 2, 2, 1, 1, 2,-1, 2, 2],
+    inferred:["estado","ambiente"],
+    substance:48,
+    substanceNote:"O eixo do “tesouraço” é específico: cortar ao menos 10 ministérios, reduzir a alíquota do IVA, cortar exceções. Contra: análises jornalísticas apontam que o plano anuncia uma série de políticas assistencialistas e de investimento sem detalhar os gastos correspondentes — promete cortar e expandir ao mesmo tempo sem fechar a conta.",
+    blurb:"Ruptura pela direita: “tesouraço” nos gastos, revisão da reforma tributária, maioridade penal aos 16, facções como narcoterrorismo, presídios federais e restrições ao STF."
+  },
+  {
+    id:"caiado", name:"Ronaldo Caiado", party:"PSD",
+    plan:"“Plano de Governo 2027-2030” · 100 pgs · 26 temas",
+    vector:[ 1,-1, 2, 1, 1, 2, null, null, null],
+    inferred:["estado","tributaria","trabalho"],
+    substance:78,
+    substanceNote:"O plano mais estruturado quanto a método: promete traduzir propostas em projetos de lei, metas do PPA e compromissos anuais, com estimativa de impacto para o que depender do Congresso. Instrumentos nomeados — “Orçamento da Verdade” para revisar subsídios e benefícios tributários, “Estratégia Brasil 2040”, carteira nacional de projetos. Usa Goiás como vitrine (citado 12 vezes): aferível, mas também autopromocional.",
+    blurb:"Centro-direita gestora: ajuste fiscal sem aumentar imposto, limite ao crescimento das despesas obrigatórias, reindustrialização por eixos, penas duras contra facções e PEC do fim da reeleição."
+  },
+  {
+    id:"zema", name:"Romeu Zema", party:"Novo",
+    plan:"“Plano Implacável” · 81 pgs · 20 temas",
+    vector:[ 2, 1, 2, 1, 2, 2,-1, 2, 2],
+    inferred:["tributaria","ambiente"],
+    substance:58,
+    substanceNote:"Propostas ousadas e claras no enunciado: privatizar todas as estatais, sair do BRICS, R$ 1 mil em fundo de ações para cada recém-nascido. Contra: avaliação jornalística do capítulo de segurança aponta ausência de detalhamento, sem estimativa de custo nem prazo para a maior parte das medidas — e boa parte exigiria emenda constitucional.",
+    blurb:"Liberal radical: choque fiscal, privatização de todas as estatais, nova reforma da Previdência, regime alternativo à CLT, saída do BRICS e entrada na OCDE, limites ao STF."
+  },
+  {
+    id:"renan", name:"Renan Santos", party:"Missão",
+    plan:"“O futuro é glorioso” · 51 pgs (resumo do Livro Amarelo, ~500 pgs)",
+    vector:[ 1, null, 2, 2, 1, 2,-1, 1, 1],
+    inferred:["ambiente","externa","judiciario"],
+    substance:72,
+    substanceNote:"Alto grau de especificidade: número exato na fusão de municípios (5.570 → 1.656), instrumentos nomeados (PEC do Equilíbrio Fiscal, Lei de Responsabilidade Gerencial, Zonas Econômicas Especiais) e um livro-base de ~500 páginas. Ressalva importante: detalhe não é o mesmo que viabilidade — várias medidas exigiriam emenda constitucional e ruptura institucional profunda.",
+    blurb:"Ruptura institucional: fusão de municípios, ajuste fiscal pela despesa, fim do Bolsa Família em favor de frentes de trabalho, “Direito Penal do Inimigo” contra facções e desfavelização."
+  },
+];
+
+/* ====================== ESTADO ====================== */
+const TOTAL = AXES.length + 1;
+let current = 0;
+let answers = new Array(AXES.length).fill(null);
+let metaAnswer = null;
+
+/* ====================== FLUXO ====================== */
+function startQuiz(){
+  document.getElementById("intro").style.display="none";
+  document.getElementById("quiz").style.display="block";
+  render();
+}
+const isMeta = () => current === AXES.length;
+
+function render(){
+  const meta = isMeta();
+  document.getElementById("screenBox").classList.toggle("meta", meta);
+
+  const src = meta ? META : AXES[current];
+  document.getElementById("axisTag").textContent = meta ? "PERGUNTA DE PESO · " + META.label : src.label;
+  document.getElementById("statementText").textContent = src.text;
+  document.getElementById("helperText").textContent = src.help || "";
+  document.getElementById("noNeutral").style.display = meta ? "none" : "block";
+
+  document.getElementById("progressLabel").textContent =
+    "PERGUNTA " + String(current+1).padStart(2,"0") + " DE " + TOTAL;
+  const pct = Math.round(current / TOTAL * 100);
+  document.getElementById("progressPct").textContent = pct + "%";
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("backBtn").style.visibility = current === 0 ? "hidden" : "visible";
+
+  const opts = meta ? META.options : LIKERT;
+  const chosen = meta ? metaAnswer : answers[current];
+  const wrap = document.getElementById("likertOptions");
+  wrap.innerHTML = "";
+
+  opts.forEach((opt, i) => {
+    if (!meta && i === 2){                    // vão central: onde estaria o "neutro"
+      const div = document.createElement("div");
+      div.className = "divider";
+      div.textContent = "ou";
+      wrap.appendChild(div);
+    }
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = opt.strong ? "strong" : "";
+    b.innerHTML = '<span class="dot"></span>' + opt.label;
+    if (chosen === opt.value) b.classList.add("selected");
+    b.addEventListener("click", () => select(opt.value, b));
+    wrap.appendChild(b);
+  });
+
+  const next = document.getElementById("nextBtn");
+  next.disabled = chosen === null;
+  next.textContent = meta ? "Ver resultado" : "Confirma";
+}
+
+function select(value, el){
+  if (isMeta()) metaAnswer = value; else answers[current] = value;
+  [...document.querySelectorAll(".likert button")].forEach(b => b.classList.remove("selected"));
+  el.classList.add("selected");
+  document.getElementById("nextBtn").disabled = false;
+}
+
+function goNext(){
+  const chosen = isMeta() ? metaAnswer : answers[current];
+  if (chosen === null) return;
+  if (current < AXES.length){ current++; render(); } else showResults();
+}
+function goBack(){ if (current > 0){ current--; render(); } }
+function restart(){
+  current = 0; answers = new Array(AXES.length).fill(null); metaAnswer = null;
+  document.getElementById("results").style.display="none";
+  document.getElementById("quiz").style.display="block";
+  render(); window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ====================== CÁLCULO ====================== */
+// -2 → 0% ; -1 → 10% ; +1 → 30% ; +2 → 40%
+const substanceWeight = () => ((metaAnswer + 2) / 4) * 0.40;
+
+function compute(){
+  const w = substanceWeight();
+  return CANDIDATES.map(c => {
+    let diff = 0, scored = 0;
+    AXES.forEach((a,i) => {
+      if (c.vector[i] === null) return;          // plano omisso: eixo fora do cálculo
+      diff += Math.abs(answers[i] - c.vector[i]);
+      scored++;
+    });
+    const ideo = scored ? Math.round((1 - diff/(4*scored)) * 100) : 0;
+    const final = Math.round(ideo * (1 - w) + c.substance * w);
+    const silent = AXES.filter((a,i) => c.vector[i] === null).map(a => a.label);
+    const gaps = AXES
+      .map((a,i) => ({ label:a.label, gap: c.vector[i] === null ? 0 : Math.abs(answers[i]-c.vector[i]) }))
+      .filter(g => g.gap >= 3).sort((x,y) => y.gap - x.gap).slice(0,2).map(g => g.label);
+    return { ...c, ideo, final, scored, silent, gaps };
+  }).sort((a,b) => b.final - a.final);
+}
+
+const labelFor = v => v === null ? null : (LIKERT.find(o => o.value === v) || {}).label;
+
+function showResults(){
+  document.getElementById("quiz").style.display="none";
+  document.getElementById("results").style.display="block";
+  document.getElementById("stampDate").textContent =
+    new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"}).toUpperCase();
+
+  const w = substanceWeight();
+  document.getElementById("weightNote").textContent = w === 0
+    ? "PESO DA CONCRETUDE: 0% — a nota reflete apenas alinhamento de posições."
+    : "PESO DA CONCRETUDE: " + Math.round(w*100) + "% da nota final · POSIÇÕES: " + Math.round((1-w)*100) + "%.";
+
+  const list = document.getElementById("resultsList");
+  list.innerHTML = "";
+
+  compute().forEach((c, idx) => {
+    const row = document.createElement("div");
+    row.className = "result-row" + (idx === 0 ? " top" : "");
+    row.style.animationDelay = (idx * .08) + "s";
+
+    const divergeFlag = c.gaps.length
+      ? `<p class="flag diverge">✕ discordância forte: ${c.gaps.join(", ")}</p>` : "";
+    const silentFlag = c.silent.length
+      ? `<p class="flag silent">○ o plano não trata destes temas (ficaram fora da nota): ${c.silent.join(", ")}</p>` : "";
+    const inferredFlag = c.inferred.length
+      ? `<p class="flag inferred">⚠ posição deduzida, não declarada diretamente: ${c.inferred.map(k => AXES.find(a=>a.key===k).label).join(", ")}</p>` : "";
+
+    const rows = AXES.map((a,i) => {
+      const v = c.vector[i];
+      if (v === null) return `<div class="drow silent"><span>${a.label}</span><span>plano omisso — fora do cálculo</span></div>`;
+      const gap = Math.abs(answers[i] - v);
+      return `<div class="drow${gap>=3?" match-far":""}">
+                <span>${a.label}</span>
+                <span>você: ${labelFor(answers[i])}<br>plano: ${labelFor(v)}</span>
+              </div>`;
+    }).join("");
+
+    row.innerHTML = `
+      <div class="result-head">
+        <span class="result-name">${c.name} <span class="party">${c.party}</span></span>
+        <span class="result-pct">${c.final}%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.max(c.final,0)}%"></div></div>
+      <div class="split mono">
+        <span>posições <b>${c.ideo}%</b></span>
+        <span>concretude <b>${c.substance}/100</b></span>
+        <span>avaliado em <b>${c.scored}/${AXES.length}</b> temas</span>
+      </div>
+      <p class="result-blurb">${c.blurb}</p>
+      ${divergeFlag}${silentFlag}${inferredFlag}
+      <button class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">Ver comparação tema a tema ▾</button>
+      <div class="detail">
+        ${rows}
+        <p class="subnote"><b>Plano:</b> ${c.plan}</p>
+        <p class="subnote"><b>Por que a nota de concretude:</b> ${c.substanceNote}</p>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>
+</body>
+</html>
