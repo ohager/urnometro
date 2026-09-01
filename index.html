@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urnômetro — com qual plano de governo você combina?</title>
-<meta name="description" content="Dez perguntas, sem opção neutra. Compare suas posições com os planos de governo registrados no TSE pelos cinco principais candidatos à Presidência em 2026.">
+<meta name="description" content="Dez perguntas, sem opção neutra. Compare suas posições com os planos de governo registrados no TSE pelos seis principais candidatos à Presidência em 2026.">
 <meta name="theme-color" content="#0F1A24">
 
 <!-- Compartilhamento social.
@@ -48,6 +48,15 @@
     Ronaldo Caiado .... "Plano de Governo 2027-2030" — 100 pgs, 26 temas
     Romeu Zema ........ "Plano Implacável" — 81 pgs, 20 temas
     Renan Santos ...... "O futuro é glorioso" — 51 pgs (resumo do Livro Amarelo, ~500 pgs)
+    Augusto Cury ...... "O Brasil dos Nossos Sonhos" — 200 pgs, 19 diretrizes + 18 projetos + 3 reformas
+
+  QUEM FICOU DE FORA (13 candidaturas foram registradas; aqui estão 6)
+  - Pablo Marçal (PRTB): registrado, mas inelegível por 8 anos desde 2024. Em 20/08/2026 o TSE
+    proibiu campanha, debates, propaganda em rádio/TV e acesso a fundo eleitoral e partidário.
+  - Clariana Barão (DC), Edmilson Costa (PCB), Hertz Dias (PSTU), Rui Costa Pimenta (PCO),
+    Samara Martins (UP), Wilson Grassi (Democrata): sem expressão nas pesquisas de intenção de voto.
+  Critério: candidaturas aptas e com plano protocolado que aparecem nominalmente nas pesquisas
+  nacionais. Se o quadro mudar, edite CANDIDATES — o cálculo se adapta ao número de candidatos.
 
   COMO EDITAR
   - AXES: os 9 eixos. Toda afirmação é escrita de forma que +2 = concordância total.
@@ -232,7 +241,7 @@
     <span class="badge mono">não-oficial</span>
   </div>
   <h1>Com qual plano de governo você combina?</h1>
-  <p class="sub">Dez perguntas, sem opção neutra: em cada uma você escolhe um lado. Comparação com os cinco planos registrados no TSE em agosto de 2026.</p>
+  <p class="sub">Dez perguntas, sem opção neutra: em cada uma você escolhe um lado. Comparação com os seis planos registrados no TSE em agosto de 2026.</p>
 </header>
 
 <main>
@@ -291,7 +300,7 @@
 </main>
 
 <footer class="disclaimer">
-  <b>Urnômetro</b> · dados levantados em agosto de 2026 a partir dos planos registrados no TSE
+  <b>Urnômetro</b> · dados levantados em agosto e revisados em setembro de 2026 a partir dos planos registrados no TSE
   e de cobertura jornalística. Posições podem mudar ao longo da campanha.
 </footer>
 
@@ -382,8 +391,8 @@ const CANDIDATES = [
   {
     id:"caiado", name:"Ronaldo Caiado", party:"PSD",
     plan:"“Plano de Governo 2027-2030” · 100 pgs · 26 temas",
-    vector:[ 1,-1, 2, 1, 1, 2, null, null, null],
-    inferred:["estado","tributaria","trabalho"],
+    vector:[ 1,-1, 2, 1, 1, 2, 1,-1, null],
+    inferred:["estado","tributaria","trabalho","ambiente","externa"],
     substance:78,
     substanceNote:"O plano mais estruturado quanto a método: promete traduzir propostas em projetos de lei, metas do PPA e compromissos anuais, com estimativa de impacto para o que depender do Congresso. Instrumentos nomeados — “Orçamento da Verdade” para revisar subsídios e benefícios tributários, “Estratégia Brasil 2040”, carteira nacional de projetos. Usa Goiás como vitrine (citado 12 vezes): aferível, mas também autopromocional.",
     blurb:"Centro-direita gestora: ajuste fiscal sem aumentar imposto, limite ao crescimento das despesas obrigatórias, reindustrialização por eixos, penas duras contra facções e PEC do fim da reeleição."
@@ -400,11 +409,20 @@ const CANDIDATES = [
   {
     id:"renan", name:"Renan Santos", party:"Missão",
     plan:"“O futuro é glorioso” · 51 pgs (resumo do Livro Amarelo, ~500 pgs)",
-    vector:[ 1, null, 2, 2, 1, 2,-1, 1, 1],
-    inferred:["ambiente","externa","judiciario"],
+    vector:[ 1, 1, 2, 2, 1, 2,-1, 1, 1],
+    inferred:["tributaria","ambiente","externa","judiciario"],
     substance:72,
     substanceNote:"Alto grau de especificidade: número exato na fusão de municípios (5.570 → 1.656), instrumentos nomeados (PEC do Equilíbrio Fiscal, Lei de Responsabilidade Gerencial, Zonas Econômicas Especiais) e um livro-base de ~500 páginas. Ressalva importante: detalhe não é o mesmo que viabilidade — várias medidas exigiriam emenda constitucional e ruptura institucional profunda.",
     blurb:"Ruptura institucional: fusão de municípios, ajuste fiscal pela despesa, fim do Bolsa Família em favor de frentes de trabalho, “Direito Penal do Inimigo” contra facções e desfavelização."
+  },
+  {
+    id:"cury", name:"Augusto Cury", party:"Avante",
+    plan:"“O Brasil dos Nossos Sonhos” · 200 pgs · 19 diretrizes + 18 projetos + 3 reformas",
+    vector:[-1,-1, 1, 1,-1, 2, 1,-1, 2],
+    inferred:["tributaria","trabalho","ambiente","externa"],
+    substance:52,
+    substanceNote:"O plano mais longo da disputa e cheio de metas numéricas: 10 milhões de novos microempreendedores, 10 mil escolas de empreendedorismo, crédito a 5-6% ao ano, corte de 15 mil cargos comissionados, 90% de energia renovável até 2040, STF de 11 para 9 ministros. Contra: quase nada tem custo estimado ou fonte de financiamento, o texto abre com 32 páginas de filosofia sobre gestão da emoção mais biografia do candidato, e as três grandes reformas — semipresidencialismo, fim da vitaliciedade no STF, fim da reeleição — exigem emenda constitucional.",
+    blurb:"Terceira via emocional: semipresidencialismo com primeiro-ministro, mandato de 8 anos no STF e Corte de 11 para 9 ministros, gestão da emoção nas escolas, 10 milhões de microempreendedores, maioridade penal aos 16 e “Lei do Terrorismo Doméstico” contra facções."
   },
 ];
 
