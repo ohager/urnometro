@@ -50,9 +50,10 @@
     Renan Santos ...... "O futuro é glorioso" — 51 pgs (resumo do Livro Amarelo, ~500 pgs)
     Augusto Cury ...... "O Brasil dos Nossos Sonhos" — 200 pgs, 19 diretrizes + 18 projetos + 3 reformas
 
-  QUEM FICOU DE FORA (13 candidaturas foram registradas; aqui estão 6)
-  - Pablo Marçal (PRTB): registrado, mas inelegível por 8 anos desde 2024. Em 20/08/2026 o TSE
-    proibiu campanha, debates, propaganda em rádio/TV e acesso a fundo eleitoral e partidário.
+  QUEM FICOU DE FORA (13 registros; 12 deferidos pelo TSE; aqui estão 6)
+  - Pablo Marçal (PRTB): registro indeferido por 7 x 0 no TSE em 11/09/2026 (inelegível até 2032
+    e sem filiação à PRTB no prazo). O substituto, Leonardo Avalanche, desistiu em 30/09/2026 —
+    a PRTB fica sem candidato.
   - Clariana Barão (DC), Edmilson Costa (PCB), Hertz Dias (PSTU), Rui Costa Pimenta (PCO),
     Samara Martins (UP), Wilson Grassi (Democrata): sem expressão nas pesquisas de intenção de voto.
   Critério: candidaturas aptas e com plano protocolado que aparecem nominalmente nas pesquisas
@@ -64,6 +65,9 @@
     plano não trata do tema. NUNCA use 0: não há posição neutra nesta escala.
   - CANDIDATES[].inferred: eixos onde o valor foi DEDUZIDO (o plano toca no assunto mas
     não declara posição direta). Diferente de `null`, que é omissão total.
+  - CANDIDATES[].campaign: eixos cujo valor vem de declarações de campanha (debates, entrevistas),
+    não do plano — porque o plano cala ou porque a campanha contradiz o plano. Use `null` só
+    quando nem plano nem campanha tratam do tema.
   - CANDIDATES[].substance: nota 0-100 de concretude. É JUÍZO EDITORIAL, com a evidência
     exposta em substanceNote dentro do próprio app. Discorde e edite.
 
@@ -192,6 +196,7 @@
   .flag{ font-family:'Space Mono',monospace; font-size:10.5px; margin-top:7px; line-height:1.5; }
   .flag.silent{ color:rgba(26,39,48,.5); }
   .flag.inferred{ color:#9A6D14; }
+  .flag.campaign{ color:var(--accent-deep); }
   .flag.diverge{ color:var(--red); }
 
   .toggle{ background:none; border:none; padding:0; margin-top:9px; font-family:'Space Mono',monospace; font-size:11px; color:var(--accent-deep); text-decoration:underline; cursor:pointer; }
@@ -249,7 +254,7 @@
     <ul class="intro-list">
       <li>Cerca de <b>3 minutos</b>. Nenhum dado sai do seu navegador.</li>
       <li><b>Não há resposta neutra.</b> A escala tem 4 pontos e sempre exige um lado — dá para concordar ou discordar em parte, mas não ficar em cima do muro.</li>
-      <li>Baseado nos <b>planos oficiais</b> protocolados no TSE, não em declarações de campanha.</li>
+      <li>Baseado nos <b>planos oficiais</b> protocolados no TSE. Quando o plano cala e o candidato se posicionou na campanha, a posição entra — e vem <b>marcada</b> como declaração de campanha.</li>
       <li>Quando um plano é <b>omisso</b> sobre um tema, o eixo sai do cálculo daquele candidato — em vez de virar uma falsa compatibilidade.</li>
       <li>A última pergunta define <b>quanto peso</b> a concretude das propostas terá na nota final.</li>
     </ul>
@@ -300,7 +305,7 @@
 </main>
 
 <footer class="disclaimer">
-  <b>Urnômetro</b> · dados levantados em agosto e revisados em setembro de 2026 a partir dos planos registrados no TSE
+  <b>Urnômetro</b> · dados levantados em agosto e revisados em setembro e outubro de 2026 a partir dos planos registrados no TSE
   e de cobertura jornalística. Posições podem mudar ao longo da campanha.
 </footer>
 
@@ -373,56 +378,62 @@ const CANDIDATES = [
   {
     id:"lula", name:"Lula", party:"PT",
     plan:"“Diretrizes para o Programa de Transformação do Brasil” · 84 pgs · 13 eixos",
-    vector:[-2,-2,-2,-2,-2,-1, 2,-2,-2],
+    vector:[-2,-2,-2,-2,-2,-1, 1,-2,-1],
     inferred:[],
+    campaign:["judiciario"],
     substance:68,
-    substanceNote:"Tem metas numéricas verificáveis (80% de crianças alfabetizadas na idade certa) e se apoia em programas já rodando — Pé-de-Meia, Farmácia Popular, PEC da Segurança já aprovada na Câmara. Contra: o próprio texto se apresenta como “primeira versão” de diretrizes, e a Autoridade Climática prometida em 2022 sumiu do programa.",
-    blurb:"Continuidade: mantém o arcabouço fiscal, reduz jornada para 40h, cria Ministério da Segurança Pública, amplia Farmácia Popular e mantém a agenda climática no centro."
+    substanceNote:"Tem metas numéricas verificáveis (80% de crianças alfabetizadas na idade certa) e se apoia em programas já rodando — Pé-de-Meia, Farmácia Popular, PEC da Segurança já aprovada na Câmara. Contra: o PT apresentou o texto como “primeira versão” do programa, sujeita a adendos, e a Autoridade Climática prometida em 2022 sumiu do programa.",
+    blurb:"Continuidade: mantém o arcabouço fiscal, reduz jornada para 40h, cria Ministério da Segurança Pública e amplia Farmácia Popular. Defende desmatamento zero, mas também a exploração de petróleo na Margem Equatorial. O plano não fala do STF; na campanha, propôs mandato fixo para ministros."
   },
   {
     id:"flavio", name:"Flávio Bolsonaro", party:"PL",
     plan:"“Para o Brasil Vencer o Atraso” · 76 pgs · 9 eixos",
-    vector:[ 1, 2, 2, 1, 1, 2,-1, 2, 2],
-    inferred:["estado","ambiente"],
+    vector:[ 1, 2, 2, 1, 2, 2,-2, 2, 2],
+    inferred:[],
+    campaign:["trabalho"],
     substance:48,
     substanceNote:"O eixo do “tesouraço” é específico: cortar ao menos 10 ministérios, reduzir a alíquota do IVA, cortar exceções. Contra: análises jornalísticas apontam que o plano anuncia uma série de políticas assistencialistas e de investimento sem detalhar os gastos correspondentes — promete cortar e expandir ao mesmo tempo sem fechar a conta.",
-    blurb:"Ruptura pela direita: “tesouraço” nos gastos, revisão da reforma tributária, maioridade penal aos 16, facções como narcoterrorismo, presídios federais e restrições ao STF."
+    blurb:"Ruptura pela direita: “tesouraço” nos gastos, revisão da reforma tributária, maioridade penal aos 16 (14 em crimes hediondos), facções como narcoterrorismo, presídios federais de segurança máxima e restrições ao STF. Contra o fim da escala 6x1, a favor do fracking."
   },
   {
     id:"caiado", name:"Ronaldo Caiado", party:"PSD",
     plan:"“Plano de Governo 2027-2030” · 100 pgs · 26 temas",
-    vector:[ 1,-1, 2, 1, 1, 2, 1,-1, null],
-    inferred:["estado","tributaria","trabalho","ambiente","externa"],
+    vector:[ 1, 1, 1, 1, 1, 2, 1,-1, 1],
+    inferred:["ambiente"],
+    campaign:["estado","tributaria","trabalho","judiciario"],
     substance:78,
-    substanceNote:"O plano mais estruturado quanto a método: promete traduzir propostas em projetos de lei, metas do PPA e compromissos anuais, com estimativa de impacto para o que depender do Congresso. Instrumentos nomeados — “Orçamento da Verdade” para revisar subsídios e benefícios tributários, “Estratégia Brasil 2040”, carteira nacional de projetos. Usa Goiás como vitrine (citado 12 vezes): aferível, mas também autopromocional.",
-    blurb:"Centro-direita gestora: ajuste fiscal sem aumentar imposto, limite ao crescimento das despesas obrigatórias, reindustrialização por eixos, penas duras contra facções e PEC do fim da reeleição."
+    substanceNote:"O plano mais estruturado quanto a método: promete um pacote inicial de reformas ao Congresso, metas no PPA 2028-2031 e metas anuais, com estimativa de impacto e fonte para toda proposta com efeito fiscal. Instrumentos nomeados — “Orçamento da Verdade” para revisar subsídios e benefícios tributários, “Estratégia Brasil 2040”, carteira nacional de projetos. Usa Goiás como vitrine (citado 12 vezes): aferível, mas também autopromocional.",
+    blurb:"Centro-direita gestora: ajuste fiscal sem aumentar imposto e sem cortes lineares, limite ao crescimento das despesas obrigatórias, reindustrialização por eixos, facções tratadas como terrorismo doméstico, maioridade penal aos 16 e PEC do fim da reeleição. Na campanha, cobra revisão de pontos da reforma tributária e mandato e quarentena para ministros do STF."
   },
   {
     id:"zema", name:"Romeu Zema", party:"Novo",
     plan:"“Plano Implacável” · 81 pgs · 20 temas",
-    vector:[ 2, 1, 2, 1, 2, 2,-1, 2, 2],
-    inferred:["tributaria","ambiente"],
+    vector:[ 2,-1, 2, 2, 2, 2,-1, 2, 2],
+    inferred:["ambiente"],
+    campaign:[],
     substance:58,
     substanceNote:"Propostas ousadas e claras no enunciado: privatizar todas as estatais, sair do BRICS, R$ 1 mil em fundo de ações para cada recém-nascido. Contra: avaliação jornalística do capítulo de segurança aponta ausência de detalhamento, sem estimativa de custo nem prazo para a maior parte das medidas — e boa parte exigiria emenda constitucional.",
-    blurb:"Liberal radical: choque fiscal, privatização de todas as estatais, nova reforma da Previdência, regime alternativo à CLT, saída do BRICS e entrada na OCDE, limites ao STF."
+    blurb:"Liberal radical: choque fiscal, privatização das estatais (na campanha, com exceção de Caixa e Embrapa), nova reforma da Previdência, Bolsa Família condicionado a aceitar emprego, regime alternativo à CLT, saída do BRICS e entrada na OCDE, limites ao STF. Quer implementar a reforma tributária, não revisá-la."
   },
   {
     id:"renan", name:"Renan Santos", party:"Missão",
     plan:"“O futuro é glorioso” · 51 pgs (resumo do Livro Amarelo, ~500 pgs)",
-    vector:[ 1, 1, 2, 2, 1, 2,-1, 1, 1],
-    inferred:["tributaria","ambiente","externa","judiciario"],
+    vector:[-1,-1, 2, 2, 2, 2,-2,-1, 2],
+    inferred:[],
+    campaign:["tributaria","trabalho","ambiente","judiciario"],
     substance:72,
     substanceNote:"Alto grau de especificidade: número exato na fusão de municípios (5.570 → 1.656), instrumentos nomeados (PEC do Equilíbrio Fiscal, Lei de Responsabilidade Gerencial, Zonas Econômicas Especiais) e um livro-base de ~500 páginas. Ressalva importante: detalhe não é o mesmo que viabilidade — várias medidas exigiriam emenda constitucional e ruptura institucional profunda.",
-    blurb:"Ruptura institucional: fusão de municípios, ajuste fiscal pela despesa, fim do Bolsa Família em favor de frentes de trabalho, “Direito Penal do Inimigo” contra facções e desfavelização."
+    blurb:"Ruptura institucional: fusão de municípios, ajuste fiscal pela despesa, fim do Bolsa Família em favor de frentes de trabalho, “Direito Penal do Inimigo” contra facções e desfavelização. Mas não é privatista: rejeita “privatizar tudo”, mantém Petrobras e Embrapa e quer o Brasil como “árbitro do Sul Global”, sem alinhamento automático aos EUA. Na campanha, defende o fim da Justiça do Trabalho e o afastamento de ministros do STF."
   },
   {
     id:"cury", name:"Augusto Cury", party:"Avante",
     plan:"“O Brasil dos Nossos Sonhos” · 200 pgs · 19 diretrizes + 18 projetos + 3 reformas",
-    vector:[-1,-1, 1, 1,-1, 2, 1,-1, 2],
-    inferred:["tributaria","trabalho","ambiente","externa"],
+    vector:[-1,-1, 1, 1,-1, 1, 1,-1, 2],
+    inferred:["ambiente","externa"],
+    campaign:["trabalho"],
     substance:52,
-    substanceNote:"O plano mais longo da disputa e cheio de metas numéricas: 10 milhões de novos microempreendedores, 10 mil escolas de empreendedorismo, crédito a 5-6% ao ano, corte de 15 mil cargos comissionados, 90% de energia renovável até 2040, STF de 11 para 9 ministros. Contra: quase nada tem custo estimado ou fonte de financiamento, o texto abre com 32 páginas de filosofia sobre gestão da emoção mais biografia do candidato, e as três grandes reformas — semipresidencialismo, fim da vitaliciedade no STF, fim da reeleição — exigem emenda constitucional.",
-    blurb:"Terceira via emocional: semipresidencialismo com primeiro-ministro, mandato de 8 anos no STF e Corte de 11 para 9 ministros, gestão da emoção nas escolas, 10 milhões de microempreendedores, maioridade penal aos 16 e “Lei do Terrorismo Doméstico” contra facções."
+    substanceNote:"O plano mais longo da disputa e cheio de metas numéricas: 10 milhões de novos microempreendedores, 10 mil escolas de empreendedorismo, crédito a 5-6% ao ano, 90% de matriz energética limpa até 2040, STF de 11 para 9 ministros. Contra: quase nada tem custo estimado ou fonte de financiamento, o texto abre com cerca de 30 páginas de ensaio e introdução filosófica antes das propostas, e as grandes reformas — semipresidencialismo e fim da vitaliciedade no STF — exigem emenda constitucional. O corte de 15 mil cargos comissionados foi prometido em entrevista, não está no plano.",
+    blurb:"Terceira via emocional: semipresidencialismo com primeiro-ministro, mandato de 8 anos no STF e Corte de 11 para 9 ministros, gestão da emoção nas escolas, 10 milhões de microempreendedores e prisão perpétua para crimes sexuais e feminicídio. Na segurança, aposta mais em integração federal do que em endurecimento penal — não propõe reduzir a maioridade penal."
   },
 ];
 
@@ -553,14 +564,17 @@ function showResults(){
       ? `<p class="flag silent">○ o plano não trata destes temas (ficaram fora da nota): ${c.silent.join(", ")}</p>` : "";
     const inferredFlag = c.inferred.length
       ? `<p class="flag inferred">⚠ posição deduzida, não declarada diretamente: ${c.inferred.map(k => AXES.find(a=>a.key===k).label).join(", ")}</p>` : "";
+    const campaignFlag = c.campaign.length
+      ? `<p class="flag campaign">◆ posição tirada de declarações de campanha, não do plano: ${c.campaign.map(k => AXES.find(a=>a.key===k).label).join(", ")}</p>` : "";
 
     const rows = AXES.map((a,i) => {
       const v = c.vector[i];
       if (v === null) return `<div class="drow silent"><span>${a.label}</span><span>plano omisso — fora do cálculo</span></div>`;
       const gap = Math.abs(answers[i] - v);
+      const source = c.campaign.includes(a.key) ? "campanha" : "plano";
       return `<div class="drow${gap>=3?" match-far":""}">
                 <span>${a.label}</span>
-                <span>você: ${labelFor(answers[i])}<br>plano: ${labelFor(v)}</span>
+                <span>você: ${labelFor(answers[i])}<br>${source}: ${labelFor(v)}</span>
               </div>`;
     }).join("");
 
@@ -576,7 +590,7 @@ function showResults(){
         <span>avaliado em <b>${c.scored}/${AXES.length}</b> temas</span>
       </div>
       <p class="result-blurb">${c.blurb}</p>
-      ${divergeFlag}${silentFlag}${inferredFlag}
+      ${divergeFlag}${silentFlag}${inferredFlag}${campaignFlag}
       <button class="toggle" onclick="this.nextElementSibling.classList.toggle('open')">Ver comparação tema a tema ▾</button>
       <div class="detail">
         ${rows}
